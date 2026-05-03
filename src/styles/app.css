@@ -1,22 +1,17 @@
 /* =============================================================
-   Reliant Intelligence Platform — app-specific overrides + tokens
+   Reliant Intelligence Platform — app-specific styles
    Built on top of Superinning's colors_and_type.css.
-   This is a DATA CONSOLE, not editorial. We shrink type, tighten
-   spacing, and lean on the system's neutrals + signal purple.
    ============================================================= */
 
 :root {
-  /* Density (overridden by Tweaks) */
   --row-h: 36px;
   --pad-card: 20px;
 
-  /* Brand */
   --reliant-ink: var(--ink-900);
   --reliant-paper: var(--paper-50);
   --reliant-accent: var(--signal-600);
   --reliant-warm: var(--clay-500);
 
-  /* Status colors — derived, not loud */
   --ok: #2F7D5B;
   --ok-tint: #E2F0E9;
   --warn: #B07A1F;
@@ -26,7 +21,6 @@
   --info: var(--signal-600);
   --info-tint: var(--signal-100);
 
-  /* Console layout */
   --sidebar-w: 248px;
   --header-h: 56px;
   --subheader-h: 52px;
@@ -45,7 +39,6 @@
   --pad-card: 28px;
 }
 
-/* Dark theme — restrained, navy-ish ink not pure black */
 [data-theme="dark"] {
   --fg-1: #ECE9DF;
   --fg-2: #C2BFB4;
@@ -62,13 +55,12 @@
   --info-tint: #1F1A35;
 }
 
-/* ========== Reset-ish ========== */
 * { box-sizing: border-box; }
 
 html, body {
   margin: 0;
   padding: 0;
-  font-size: 14px;          /* console body — smaller than marketing */
+  font-size: 14px;
   line-height: 1.5;
   letter-spacing: 0;
   color: var(--fg-1);
@@ -93,7 +85,7 @@ input, select, textarea {
   color: inherit;
 }
 
-/* ========== Typography overrides for console ========== */
+/* ========== Typography ========== */
 
 .brand-wordmark {
   font-family: var(--font-serif);
@@ -177,7 +169,9 @@ input, select, textarea {
   font-variant-numeric: tabular-nums;
 }
 
-/* ========== Layout primitives ========== */
+.small { font-size: var(--text-sm); color: var(--fg-3); }
+
+/* ========== Layout ========== */
 
 .app {
   display: grid;
@@ -217,7 +211,6 @@ input, select, textarea {
 }
 [data-theme="dark"] .brand-mark {
   background: var(--signal-600);
-  color: var(--paper-50);
 }
 
 .sidebar-nav {
@@ -362,7 +355,7 @@ input, select, textarea {
   border: 2px solid var(--bg-1);
 }
 
-/* ========== Subheader (page title row) ========== */
+/* ========== Subheader ========== */
 .subheader {
   display: flex;
   align-items: flex-end;
@@ -377,7 +370,7 @@ input, select, textarea {
   align-items: center;
 }
 
-/* ========== Tabs strip (sub-tabs within a page) ========== */
+/* ========== Tabs strip ========== */
 .tabs-strip {
   display: flex;
   gap: 2px;
@@ -407,7 +400,7 @@ input, select, textarea {
   color: var(--fg-3);
 }
 
-/* ========== Page body / scroll area ========== */
+/* ========== Page body ========== */
 .page-body {
   flex: 1;
   overflow-y: auto;
@@ -658,7 +651,7 @@ input, select, textarea {
   vertical-align: middle;
 }
 
-/* ========== Source line / footnote ========== */
+/* ========== Source line ========== */
 .source-line {
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -708,7 +701,7 @@ input, select, textarea {
 
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-/* ========== Drawer (right-side) ========== */
+/* ========== Drawer ========== */
 .drawer-backdrop {
   position: fixed; inset: 0;
   background: rgba(11,10,18,0.36);
@@ -753,10 +746,10 @@ input, select, textarea {
   box-shadow: 0 0 0 3px var(--info-tint);
 }
 
-/* ========== Sparklines & inline ========== */
+/* ========== Sparklines ========== */
 .spark { width: 100%; height: 36px; }
 
-/* ========== Empty / placeholder ========== */
+/* ========== Empty ========== */
 .empty {
   border: 1px dashed var(--border-2);
   border-radius: 12px;
@@ -766,7 +759,7 @@ input, select, textarea {
   font-size: 13px;
 }
 
-/* ========== Annex / details ========== */
+/* ========== Annex ========== */
 details.annex {
   border: 1px solid var(--border-1);
   border-radius: 12px;
@@ -784,7 +777,33 @@ details.annex[open] summary { margin-bottom: 12px; }
 details.annex ol { padding-left: 20px; }
 details.annex li { margin: 6px 0; color: var(--fg-2); }
 
-/* ========== Print rules for pitch deck ========== */
+div.annex {
+  border: 1px solid var(--border-1);
+  border-radius: 12px;
+  padding: 18px 20px;
+  background: var(--bg-2);
+  margin-top: 8px;
+}
+
+/* ========== Deck preview (on-screen) ========== */
+.deck-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.deck-page {
+  background: white;
+  border: 1px solid var(--border-1);
+  border-radius: 12px;
+  padding: 48px 56px;
+  min-height: 620px;
+  display: flex;
+  flex-direction: column;
+  color: var(--ink-900);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ========== Print rules ========== */
 @media print {
   body, html { overflow: visible; height: auto; background: white; }
   .app, .sidebar, .app-header, .subheader, .tabs-strip, .header-actions,
@@ -808,7 +827,7 @@ details.annex li { margin: 6px 0; color: var(--fg-2); }
 }
 .print-only { display: none; }
 
-/* ========== Scrollbar styling ========== */
+/* ========== Scrollbar ========== */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {

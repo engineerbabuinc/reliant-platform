@@ -1,11 +1,6 @@
-/* Reliant — shared primitive components & SVG charts.
-   Pure SVG charts, no external libs. All inherit currentColor & CSS vars.
-*/
+import { useEffect, Fragment } from 'react';
 
-const { useState, useEffect, useMemo, useRef, useLayoutEffect, useCallback, Fragment } = React;
-
-// ---------- Inline icon set (lucide-ish, hand-drawn) ----------
-function Icon({ name, size = 16, stroke = 1.5, ...rest }) {
+export function Icon({ name, size = 16, stroke = 1.5, ...rest }) {
   const props = {
     width: size, height: size, viewBox: '0 0 24 24',
     fill: 'none', stroke: 'currentColor', strokeWidth: stroke,
@@ -48,16 +43,14 @@ function Icon({ name, size = 16, stroke = 1.5, ...rest }) {
   }
 }
 
-// ---------- Trend / delta pill ----------
-function Delta({ pct, suffix = ' YoY' }) {
+export function Delta({ pct, suffix = ' YoY' }) {
   if (pct == null) return <span className="delta flat">—</span>;
   const cls = pct > 0.05 ? 'up' : pct < -0.05 ? 'down' : 'flat';
   const arrow = cls === 'up' ? '↑' : cls === 'down' ? '↓' : '·';
   return <span className={`delta ${cls}`}>{arrow} {(pct > 0 ? '+' : '') + pct.toFixed(1)}%{suffix}</span>;
 }
 
-// ---------- KPI card ----------
-function KPI({ label, value, unit, delta, sub, ink }) {
+export function KPI({ label, value, unit, delta, sub, ink }) {
   return (
     <div className={`card kpi ${ink ? 'ink' : ''}`}>
       <div className="kpi-label">{label}</div>
@@ -70,8 +63,7 @@ function KPI({ label, value, unit, delta, sub, ink }) {
   );
 }
 
-// ---------- Section header ----------
-function SectionHead({ title, sub, right, eyebrow }) {
+export function SectionHead({ title, sub, right, eyebrow }) {
   return (
     <div className="row" style={{ alignItems: 'flex-end', marginBottom: 14, gap: 16 }}>
       <div>
@@ -85,13 +77,11 @@ function SectionHead({ title, sub, right, eyebrow }) {
   );
 }
 
-// ---------- Source line ----------
-function Source({ children }) {
+export function Source({ children }) {
   return <div className="source-line">SRC · {children}</div>;
 }
 
-// ---------- Tabs ----------
-function Tabs({ items, value, onChange }) {
+export function Tabs({ items, value, onChange }) {
   return (
     <div className="tabs-strip">
       {items.map(it => (
@@ -106,12 +96,7 @@ function Tabs({ items, value, onChange }) {
   );
 }
 
-// ============================================================
-// Charts — pure SVG. Pass series/data + width/height.
-// ============================================================
-
-// 1. Bar chart — vertical bars with optional second series
-function BarChart({ data, height = 220, valueKey = 'value', valueKey2, labelKey = 'label', formatY = String, showAxis = true }) {
+export function BarChart({ data, height = 220, valueKey = 'value', valueKey2, labelKey = 'label', formatY = String, showAxis = true }) {
   const W = 720, H = height;
   const pad = { l: 44, r: 16, t: 16, b: 32 };
   const innerW = W - pad.l - pad.r;
@@ -122,7 +107,6 @@ function BarChart({ data, height = 220, valueKey = 'value', valueKey2, labelKey 
   const bandW = innerW / data.length;
   const barGroup = bandW * 0.66;
   const barW = valueKey2 ? barGroup / 2 - 2 : barGroup;
-
   const ticks = 4;
   const tickVals = Array.from({ length: ticks + 1 }, (_, i) => (niceMax / ticks) * i);
 
@@ -161,8 +145,7 @@ function BarChart({ data, height = 220, valueKey = 'value', valueKey2, labelKey 
   );
 }
 
-// 2. Line chart — single or dual line
-function LineChart({ data, height = 220, lines = [{ key: 'value', color: 'var(--ink-900)', label: '' }], xKey = 'label', formatY = String }) {
+export function LineChart({ data, height = 220, lines = [{ key: 'value', color: 'var(--ink-900)', label: '' }], xKey = 'label', formatY = String }) {
   const W = 720, H = height;
   const pad = { l: 44, r: 16, t: 16, b: 32 };
   const innerW = W - pad.l - pad.r;
@@ -212,8 +195,7 @@ function LineChart({ data, height = 220, lines = [{ key: 'value', color: 'var(--
   );
 }
 
-// 3. Horizontal bar / ranking
-function RankingBars({ data, max, valueKey = 'value', labelKey = 'label', formatV = String, color = 'var(--ink-900)', height = 28 }) {
+export function RankingBars({ data, max, valueKey = 'value', labelKey = 'label', formatV = String, color = 'var(--ink-900)' }) {
   const m = max || Math.max(...data.map(d => d[valueKey]));
   return (
     <div className="col" style={{ gap: 8 }}>
@@ -230,8 +212,7 @@ function RankingBars({ data, max, valueKey = 'value', labelKey = 'label', format
   );
 }
 
-// 4. Donut chart (composition)
-function Donut({ data, size = 180, valueKey = 'value', labelKey = 'label', colorKey = 'color', formatV = String, centerLabel, centerValue }) {
+export function Donut({ data, size = 180, valueKey = 'value', labelKey = 'label', colorKey = 'color', formatV = String, centerLabel, centerValue }) {
   const total = data.reduce((s, d) => s + d[valueKey], 0);
   const r = size / 2 - 6;
   const cx = size / 2, cy = size / 2;
@@ -263,7 +244,7 @@ function Donut({ data, size = 180, valueKey = 'value', labelKey = 'label', color
       <div className="col" style={{ gap: 6, flex: 1 }}>
         {data.map((d, i) => (
           <div key={i} className="row" style={{ gap: 8, fontSize: 12.5 }}>
-            <span className="legend-swatch" style={{ width: 10, height: 10, borderRadius: 2, background: d[colorKey] || 'var(--ink-900)' }} />
+            <span style={{ width: 10, height: 10, borderRadius: 2, background: d[colorKey] || 'var(--ink-900)', flexShrink: 0 }} />
             <span style={{ color: 'var(--fg-2)' }}>{d[labelKey]}</span>
             <span className="spacer" />
             <span className="metric-num" style={{ color: 'var(--fg-1)' }}>{formatV(d[valueKey])}</span>
@@ -274,8 +255,7 @@ function Donut({ data, size = 180, valueKey = 'value', labelKey = 'label', color
   );
 }
 
-// 5. Scatter (e.g. rent vs vacancy)
-function Scatter({ data, height = 280, xKey, yKey, sizeKey, labelKey, xLabel, yLabel, formatX = String, formatY = String, color = 'var(--signal-600)' }) {
+export function Scatter({ data, height = 280, xKey, yKey, sizeKey, labelKey, xLabel, yLabel, formatX = String, formatY = String, color = 'var(--signal-600)' }) {
   const W = 720, H = height;
   const pad = { l: 56, r: 24, t: 16, b: 40 };
   const xs = data.map(d => d[xKey]);
@@ -329,8 +309,7 @@ function Scatter({ data, height = 280, xKey, yKey, sizeKey, labelKey, xLabel, yL
   );
 }
 
-// 6. Sparkline (small inline)
-function Sparkline({ data, width = 96, height = 28, color = 'var(--ink-900)' }) {
+export function Sparkline({ data, width = 96, height = 28, color = 'var(--ink-900)' }) {
   if (!data || !data.length) return null;
   const max = Math.max(...data), min = Math.min(...data);
   const span = (max - min) || 1;
@@ -343,8 +322,7 @@ function Sparkline({ data, width = 96, height = 28, color = 'var(--ink-900)' }) 
   );
 }
 
-// 7. Stacked horizontal funnel (for pipeline)
-function PipelineFunnel({ stages }) {
+export function PipelineFunnel({ stages }) {
   const max = Math.max(...stages.map(s => s.count));
   return (
     <div className="col" style={{ gap: 6 }}>
@@ -366,8 +344,7 @@ function PipelineFunnel({ stages }) {
   );
 }
 
-// 8. Modal & Drawer
-function Modal({ title, children, footer, onClose }) {
+export function Modal({ title, children, footer, onClose }) {
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') onClose(); }
     document.addEventListener('keydown', onKey);
@@ -390,7 +367,7 @@ function Modal({ title, children, footer, onClose }) {
   );
 }
 
-function Drawer({ title, children, footer, onClose }) {
+export function Drawer({ title, children, footer, onClose }) {
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') onClose(); }
     document.addEventListener('keydown', onKey);
@@ -413,10 +390,3 @@ function Drawer({ title, children, footer, onClose }) {
     </Fragment>
   );
 }
-
-// Make globally available
-Object.assign(window, {
-  Icon, Delta, KPI, SectionHead, Source, Tabs,
-  BarChart, LineChart, RankingBars, Donut, Scatter, Sparkline, PipelineFunnel,
-  Modal, Drawer,
-});

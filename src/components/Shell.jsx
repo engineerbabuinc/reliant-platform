@@ -1,23 +1,25 @@
-/* Reliant — App shell: sidebar, header, market context, navigation */
+import { CITIES, SOURCES } from '../data.js';
+import { Icon } from './Primitives.jsx';
 
 const NAV_ITEMS = [
-  { id: 'master',      label: 'Master Dashboard', icon: 'grid' },
-  { id: 'hospitality', label: 'Hospitality',      icon: 'bed' },
-  { id: 'healthcare',  label: 'Healthcare',       icon: 'building' },
-  { id: 'industrial',  label: 'Industrial RE',    icon: 'truck' },
-  { id: 'commercial',  label: 'Commercial RE',    icon: 'briefcase' },
-  { id: 'residential', label: 'Residential RE',   icon: 'home' },
-  { id: 'land',        label: 'Land Pitch Builder', icon: 'map' },
-  { id: 'team',        label: 'Team & Assignments', icon: 'users' },
-  { id: 'issues',      label: 'Issue Tracker',    icon: 'alert' },
+  { id: 'master',      label: 'Master Dashboard',  icon: 'grid' },
+  { id: 'hospitality', label: 'Hospitality',       icon: 'bed' },
+  { id: 'healthcare',  label: 'Healthcare',        icon: 'building' },
+  { id: 'industrial',  label: 'Industrial RE',     icon: 'truck' },
+  { id: 'commercial',  label: 'Commercial RE',     icon: 'briefcase' },
+  { id: 'residential', label: 'Residential RE',    icon: 'home' },
+  { id: 'land',        label: 'Land Pitch Builder',icon: 'map' },
+  { id: 'team',        label: 'Team & Assignments',icon: 'users' },
+  { id: 'issues',      label: 'Issue Tracker',     icon: 'alert' },
 ];
 
-function Sidebar({ active, onChange, openCount }) {
-  const grouped = [
-    { label: 'Overview',  items: ['master'] },
-    { label: 'Sectors',   items: ['hospitality','healthcare','industrial','commercial','residential'] },
-    { label: 'Workbench', items: ['land','team','issues'] },
-  ];
+const NAV_GROUPS = [
+  { label: 'Overview',  items: ['master'] },
+  { label: 'Sectors',   items: ['hospitality','healthcare','industrial','commercial','residential'] },
+  { label: 'Workbench', items: ['land','team','issues'] },
+];
+
+export function Sidebar({ active, onChange, openCount }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -25,7 +27,7 @@ function Sidebar({ active, onChange, openCount }) {
         <div className="brand-wordmark">Reliant<span className="ampr"> </span>Associates</div>
       </div>
       <nav className="sidebar-nav">
-        {grouped.map(g => (
+        {NAV_GROUPS.map(g => (
           <div key={g.label}>
             <div className="nav-section-label">{g.label}</div>
             {g.items.map(id => {
@@ -55,20 +57,19 @@ function Sidebar({ active, onChange, openCount }) {
   );
 }
 
-function MarketSelector({ value, onChange }) {
-  const cities = window.RELIANT.CITIES;
+export function MarketSelector({ value, onChange }) {
   return (
     <div className="market-select">
       <span className="market-label">Market</span>
       <select value={value} onChange={e => onChange(e.target.value)}>
-        {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+        {CITIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
       </select>
       <Icon name="chevron-down" size={14} />
     </div>
   );
 }
 
-function Header({ market, onMarket, onOpenNotifs, onOpenTweaks, crmLive }) {
+export function Header({ market, onMarket, onOpenNotifs, crmLive, onOpenTweaks }) {
   return (
     <header className="app-header">
       <div className="search">
@@ -78,21 +79,20 @@ function Header({ market, onMarket, onOpenNotifs, onOpenTweaks, crmLive }) {
       </div>
       <div className="header-actions">
         <MarketSelector value={market} onChange={onMarket} />
-        <span className={`pill ${crmLive ? 'ok' : ''}`} title={window.RELIANT.SOURCES.crm} style={{ marginLeft: 8 }}>
+        <span className={`pill ${crmLive ? 'ok' : ''}`} title={SOURCES.crm} style={{ marginLeft: 8 }}>
           <span className="dot" /> CRM {crmLive ? 'live' : 'stale'}
         </span>
         <button className="icon-btn" title="Notifications" onClick={onOpenNotifs}>
           <Icon name="bell" size={16}/>
           <span className="dot" />
         </button>
-        <button className="icon-btn" title="Settings"><Icon name="settings" size={16}/></button>
+        <button className="icon-btn" title="Settings" onClick={onOpenTweaks}><Icon name="settings" size={16}/></button>
       </div>
     </header>
   );
 }
 
-// Generic page subheader (title row)
-function PageHead({ eyebrow, title, sub, actions }) {
+export function PageHead({ eyebrow, title, sub, actions }) {
   return (
     <div className="subheader">
       <div>
@@ -104,5 +104,3 @@ function PageHead({ eyebrow, title, sub, actions }) {
     </div>
   );
 }
-
-Object.assign(window, { Sidebar, MarketSelector, Header, PageHead, NAV_ITEMS });

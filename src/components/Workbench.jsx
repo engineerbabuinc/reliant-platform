@@ -34,7 +34,7 @@ export function LandPitchTab() {
       />
 
       {/* Step indicator */}
-      <div className="row" style={{ gap: 0, marginBottom: 28, borderBottom: '1px solid var(--border-1)' }}>
+      <div className="row" style={{ gap: 0, marginBottom: 28, borderBottom: '1px solid var(--border-1)', padding: '0 32px' }}>
         {['Parcel', 'Use case', 'Client', 'Preview'].map((label, i) => {
           const n = i + 1;
           const done = step > n;
@@ -434,6 +434,7 @@ export function TeamTab() {
         </Fragment>}
       />
 
+      <div className="page-body">
       <div className="grid cols-4" style={{ marginBottom: 24 }}>
         <KPI label="Team size" value={TEAM.length} />
         <KPI label="Avg utilisation" value={avgUtil} unit="%" delta={3.2} sub="vs FY25" />
@@ -499,6 +500,7 @@ export function TeamTab() {
           </table>
         </div>
       </div>
+      </div>
     </Fragment>
   );
 }
@@ -525,6 +527,7 @@ export function IssuesTab() {
         actions={<button className="btn primary"><Icon name="plus" size={14}/> New issue</button>}
       />
 
+      <div className="page-body">
       <div className="grid cols-4" style={{ marginBottom: 24 }}>
         <KPI label="Open" value={ISSUES.filter(i=>i.status==='Open').length} />
         <KPI label="In review" value={ISSUES.filter(i=>i.status==='In review').length} />
@@ -591,6 +594,7 @@ export function IssuesTab() {
           </div>
         </Modal>
       )}
+      </div>
     </Fragment>
   );
 }

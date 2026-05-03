@@ -64,6 +64,7 @@ export const HOSPITALITY = {
     yoyKeysPct: 8.2,
     yoyADRPct: 11.6,
     yoyRevPARPct: 14.2,
+    yoyUtilPct: 2.1,
     branded_pct_fy26: 38.2,
   },
   quarterlyADR: [

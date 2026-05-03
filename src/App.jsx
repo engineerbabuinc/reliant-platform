@@ -1,5 +1,5 @@
-import { useState, useEffect, Fragment } from 'react';
-import { ISSUES, OPEN_QUESTIONS } from './data.js';
+import { useState, useEffect } from 'react';
+import { OPEN_QUESTIONS } from './data.js';
 import { Sidebar, Header } from './components/Shell.jsx';
 import { Drawer } from './components/Primitives.jsx';
 import { MasterDashboard } from './components/Master.jsx';
@@ -8,6 +8,8 @@ import {
 } from './components/Sectors.jsx';
 import { LandPitchTab, TeamTab, IssuesTab } from './components/Workbench.jsx';
 import { TweaksPanel } from './components/TweaksPanel.jsx';
+import { useData } from './hooks/useData.js';
+import { api } from './api.js';
 import './styles/colors_and_type.css';
 import './styles/app.css';
 
@@ -31,7 +33,9 @@ export default function App() {
     document.documentElement.dataset.density = tweaks.density;
   }, [tweaks.theme, tweaks.density]);
 
-  const openIssues = ISSUES.filter(i => ['Open','In review','Blocked'].includes(i.status)).length;
+  const { data: issues } = useData(api.issues.list);
+  const openIssues = (issues || []).filter(i => ['Open','In review','Blocked'].includes(i.status)).length;
+  const { data: notifications } = useData(api.notifications.list);
 
   function jumpTo(sectorId) {
     setPage(sectorId);
@@ -68,14 +72,8 @@ export default function App() {
       {/* Notifications drawer */}
       <Drawer open={notifs} onClose={() => setNotifs(false)} title="Notifications">
         <div className="col" style={{ gap: 0 }}>
-          {[
-            { time:'2h',  title:'New healthcare RFP — Apollo Pune 250-bed',          cat:'requirement' },
-            { time:'5h',  title:'Goa hospitality deal closed — South Goa, 184 keys', cat:'deal' },
-            { time:'1d',  title:'Q4 FY26 hospitality data refreshed',                cat:'data' },
-            { time:'1d',  title:'Vikram Rao opened pitch for Sohna 24-acre',         cat:'team' },
-            { time:'2d',  title:'CRM sync warning — 3 stale opportunities',          cat:'system' },
-          ].map((n, i, arr) => (
-            <div key={i} className="row" style={{ padding:'12px 0', borderBottom: i < arr.length-1 ? '1px solid var(--border-1)' : 0, gap: 12, alignItems:'flex-start' }}>
+          {(notifications || []).map((n, i, arr) => (
+            <div key={n.id} className="row" style={{ padding:'12px 0', borderBottom: i < arr.length-1 ? '1px solid var(--border-1)' : 0, gap: 12, alignItems:'flex-start' }}>
               <span className="pill" style={{ minWidth:84, justifyContent:'center', flexShrink:0 }}>{n.cat}</span>
               <div className="col" style={{ gap: 2, flex:1 }}>
                 <div style={{ fontSize:13.5 }}>{n.title}</div>

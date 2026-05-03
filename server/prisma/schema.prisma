@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Deal {
+  id        String   @id @default(cuid())
+  name      String
+  sector    String
+  stage     String
+  city      String
+  valueCr   Float    @default(0)
+  owner     String
+  hot       Boolean  @default(false)
+  notes     String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PipelineStage {
+  id      String @id @default(cuid())
+  stage   String @unique
+  count   Int
+  valueCr Float
+  order   Int
+}
+
+model Issue {
+  id        String         @id
+  title     String
+  severity  String
+  status    String
+  owner     String
+  area      String
+  opened    String
+  comments  IssueComment[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model IssueComment {
+  id        String   @id @default(cuid())
+  issueId   String
+  issue     Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  author    String
+  body      String
+  createdAt DateTime @default(now())
+}
+
+model TeamMember {
+  id          String  @id
+  name        String
+  role        String
+  sector      String
+  city        String
+  util        Int     @default(0)
+  dealsActive Int     @default(0)
+  gciYtdCr   Float   @default(0)
+}
+
+model LandParcel {
+  id           String   @id
+  city         String
+  area         String
+  acres        Float
+  fsi          Float
+  zoning       String
+  askCrPerAcre Float
+  roadFt       Int
+  airportKm    Int
+  railKm       Int
+  status       String   @default("Active")
+  notes        String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  cat       String
+  time      String
+  createdAt DateTime @default(now())
+}

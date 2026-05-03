@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-density="cozy">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Reliant Intelligence Platform</title>
+<link rel="stylesheet" href="design/colors_and_type.css"/>
+<link rel="stylesheet" href="design/app.css"/>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<div id="tweaks-mount"></div>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="components/primitives.jsx"></script>
+<script type="text/babel" src="components/shell.jsx"></script>
+<script type="text/babel" src="components/master.jsx"></script>
+<script type="text/babel" src="components/sectors.jsx"></script>
+<script type="text/babel" src="components/workbench.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "light",
+  "density": "cozy",
+  "crmLive": true,
+  "showAnnex": true
+}/*EDITMODE-END*/;
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [active, setActive] = useState('master');
+  const [market, setMarket] = useState('pan');
+  const [openNotifs, setOpenNotifs] = useState(false);
+
+  // apply theme + density to <html>
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute('data-theme', tweaks.theme);
+    document.documentElement.setAttribute('data-density', tweaks.density);
+  }, [tweaks.theme, tweaks.density]);
+
+  const F = window.RELIANT;
+  const openIssues = F.ISSUES.filter(i => i.status !== 'Resolved' && i.status !== "Won't fix").length;
+
+  function jump(id) {
+    const map = { hospitality:'hospitality', healthcare:'healthcare', industrial:'industrial', commercial:'commercial', residential:'residential', land:'land' };
+    setActive(map[id] || id);
+  }
+
+  return (
+    <div className="app">
+      <Sidebar active={active} onChange={setActive} openCount={openIssues}/>
+      <main className="main">
+        <Header market={market} onMarket={setMarket} crmLive={tweaks.crmLive} onOpenNotifs={() => setOpenNotifs(true)}/>
+        {active === 'master' && <MasterDashboard market={market} crmLive={tweaks.crmLive} onJump={jump}/>}
+        {active === 'hospitality' && <HospitalityTab market={market}/>}
+        {active === 'healthcare' && <HealthcareTab market={market}/>}
+        {active === 'industrial' && <IndustrialTab market={market}/>}
+        {active === 'commercial' && <CommercialTab market={market}/>}
+        {active === 'residential' && <ResidentialTab market={market}/>}
+        {active === 'land' && <LandPitchTab market={market}/>}
+        {active === 'team' && <TeamTab market={market}/>}
+        {active === 'issues' && <IssuesTab/>}
+
+        {tweaks.showAnnex && active === 'master' && (
+          <div style={{ position: 'fixed', bottom: 16, left: 264, right: 16, zIndex: 50, pointerEvents: 'none' }}>
+            <div style={{ pointerEvents: 'auto', maxWidth: 760 }}>
+              <details className="annex">
+                <summary>Annex · 10 open questions for Reliant <span className="small fg-3" style={{ marginLeft: 8 }}>(click to expand)</span></summary>
+                <ol>{F.OPEN_QUESTIONS.map((q,i) => <li key={i}>{q}</li>)}</ol>
+              </details>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {openNotifs && (
+        <Drawer title="Notifications" onClose={() => setOpenNotifs(false)}>
+          <div className="col" style={{ gap: 0 }}>
+            {F.MASTER.notifications.map((n,i) => (
+              <div key={i} className="row" style={{ padding: '12px 0', borderBottom: i < F.MASTER.notifications.length - 1 ? '1px solid var(--border-1)' : 0, gap: 12 }}>
+                <span className="pill" style={{ minWidth: 84, justifyContent: 'center' }}>{n.cat}</span>
+                <div style={{ fontSize: 13.5, flex: 1 }}>{n.title}</div>
+                <div className="small fg-3" style={{ fontFamily: 'var(--font-mono)' }}>{n.time} ago</div>
+              </div>
+            ))}
+          </div>
+        </Drawer>
+      )}
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Appearance">
+          <TweakRadio label="Theme" value={tweaks.theme} onChange={v => setTweak('theme', v)}
+                      options={[{ value:'light', label:'Light' }, { value:'dark', label:'Dark' }]}/>
+          <TweakRadio label="Density" value={tweaks.density} onChange={v => setTweak('density', v)}
+                      options={[{ value:'compact', label:'Compact' }, { value:'cozy', label:'Cozy' }, { value:'comfy', label:'Comfy' }]}/>
+        </TweakSection>
+        <TweakSection title="Data">
+          <TweakToggle label="CRM live" checked={tweaks.crmLive} onChange={v => setTweak('crmLive', v)}/>
+          <TweakToggle label="Show open-questions annex" checked={tweaks.showAnnex} onChange={v => setTweak('showAnnex', v)}/>
+        </TweakSection>
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

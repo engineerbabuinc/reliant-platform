@@ -2,15 +2,10 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database…');
+  const existing = await prisma.deal.count();
+  if (existing > 0) { console.log('Database already seeded, skipping.'); return; }
 
-  await prisma.issueComment.deleteMany();
-  await prisma.issue.deleteMany();
-  await prisma.deal.deleteMany();
-  await prisma.pipelineStage.deleteMany();
-  await prisma.teamMember.deleteMany();
-  await prisma.landParcel.deleteMany();
-  await prisma.notification.deleteMany();
+  console.log('🌱 Seeding database…');
 
   await prisma.pipelineStage.createMany({ data: [
     { stage:'Identified',   count:184, valueCr:14200, order:1 },

@@ -367,12 +367,13 @@ export function Modal({ title, children, footer, onClose }) {
   );
 }
 
-export function Drawer({ title, children, footer, onClose }) {
+export function Drawer({ open, title, children, footer, onClose }) {
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') onClose(); }
-    document.addEventListener('keydown', onKey);
+    if (open) document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [open, onClose]);
+  if (!open) return null;
   return (
     <Fragment>
       <div className="drawer-backdrop" onClick={onClose}/>
